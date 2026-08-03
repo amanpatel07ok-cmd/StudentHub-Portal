@@ -1,0 +1,23 @@
+﻿# Environment & credentials
+.env
+*.local
+
+# Logs
+logs/
+*.log
+
+# Uploads
+uploads/event-posters/*
+!uploads/event-posters/.gitkeep
+
+# CSV export data
+*.csv
+students-signups.csv
+html/students-signups.csv
+
+# System & editor files
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/
+.idea/
