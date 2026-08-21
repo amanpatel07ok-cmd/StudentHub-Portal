@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudentHub - Frequently Asked Questions</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="header">
+<nav class="navbar">
+<div class="logo">
+<img src="https://img.icons8.com/bubbles/1200/charotar-university.jpg" alt="University Logo" width="50" height="50">
+<h2>Student Hub</h2>
+</div>
+</nav>
+<div class="nav">
+<a href="index.html" class="nav-btn">Home</a>
+<a href="faq.html" class="active nav-btn">FAQ</a>
+<button onclick="toggleTheme()" id="themeButton">Dark Mode</button>
+</div>
+</header>
+<main>
+<div class="faq-container">
+<h1>Frequently Asked Questions</h1>
+<p class="faq-intro">Find answers to common questions about StudentHub Portal.</p>
+<div class="faq-item">
+<button class="faq-question" onclick="toggleFAQ(1)">How do I register on StudentHub? <span>+</span></button>
+<div class="faq-answer" id="faq1"><p>Click on the Sign Up option from the role selection screen and enter your name, email, mobile number, and password.</p></div>
+</div>
+<div class="faq-item">
+<button class="faq-question" onclick="toggleFAQ(2)">How do I log in? <span>+</span></button>
+<div class="faq-answer" id="faq2"><p>Use your registered enrollment number or email address along with your secure password on the login page.</p></div>
+</div>
+<div class="faq-item">
+<button class="faq-question" onclick="toggleFAQ(3)">How can I update my profile? <span>+</span></button>
+<div class="faq-answer" id="faq3"><p>Log in to your Student Account and navigate to Profile settings to update contact details.</p></div>
+</div>
+</div>
+</main>
+<footer><p>Â© 2026 Student Hub Portal</p></footer>
+<script src="js/script.js"></script>
+</body>
+</html>
