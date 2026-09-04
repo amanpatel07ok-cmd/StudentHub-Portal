@@ -1,0 +1,90 @@
+﻿[
+    {
+        "enrollment": "25DCS076",
+        "name": "Aman Patel",
+        "course": "DCS",
+        "year": 2,
+        "attendance": 94,
+        "result": "PASS"
+    },
+    {
+        "enrollment": "25DCS021",
+        "name": "Dev Patel",
+        "course": "DCS",
+        "year": 2,
+        "attendance": 92,
+        "result": "PASS"
+    },
+    {
+        "enrollment": "25DCS042",
+        "name": "Krenisha Jogani",
+        "course": "DCS",
+        "year": 2,
+        "attendance": 88,
+        "result": "PASS"
+    },
+    {
+        "enrollment": "25DCS107",
+        "name": "Niksha Ramani",
+        "course": "DCS",
+        "year": 2,
+        "attendance": 95,
+        "result": "PASS"
+    },
+    {
+        "enrollment": "25DCS115",
+        "name": "Rahul Sharma",
+        "course": "DCS",
+        "year": 2,
+        "attendance": 81,
+        "result": "PASS"
+    },
+    {
+        "enrollment": "25DCS126",
+        "name": "Priya Patel",
+        "course": "DCS",
+        "year": 2,
+        "attendance": 76,
+        "result": "PASS"
+    },
+    {
+        "enrollment": "25DCE138",
+        "name": "Amit Varma",
+        "course": "BCA",
+        "year": 2,
+        "attendance": 69,
+        "result": "PASS"
+    },
+    {
+        "enrollment": "25DCE149",
+        "name": "Neha Shah",
+        "course": "BCA",
+        "year": 2,
+        "attendance": 91,
+        "result": "PASS"
+    },
+    {
+        "enrollment": "25DCE155",
+        "name": "Riya Joshi",
+        "course": "BCA",
+        "year": 2,
+        "attendance": 62,
+        "result": "PASS"
+    },
+    {
+        "enrollment": "25DCS088",
+        "name": "Kevin Patel",
+        "course": "B.Tech",
+        "year": 3,
+        "attendance": 89,
+        "result": "PASS"
+    },
+    {
+        "enrollment": "25DCS092",
+        "name": "Meet Mehta",
+        "course": "B.Tech",
+        "year": 3,
+        "attendance": 93,
+        "result": "PASS"
+    }
+]
