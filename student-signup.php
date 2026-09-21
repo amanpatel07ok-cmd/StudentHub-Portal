@@ -1,149 +1,170 @@
 ﻿<?php
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+require_once __DIR__ . "/../db_mysqli.php";
 
-    // Get form data
-    $name = trim($_POST["name"] ?? "");
-    $email = trim($_POST["email"] ?? "");
-    $mobile = trim($_POST["mobile"] ?? "");
-    $password = $_POST["password"] ?? "";
-    $confirmPassword = $_POST["confirmPassword"] ?? "";
-    $course = trim($_POST["course"] ?? "");
-    $year = trim($_POST["year"] ?? "");
-    $gender = trim($_POST["gender"] ?? "");
-    $terms = isset($_POST["terms"]);
+function getRegistrationField(string $key): string
+{
+    $value = $_POST[$key] ?? "";
+    return is_string($value) ? trim($value) : "";
+}
 
-    $errors = [];
+function renderRegistrationMessage(array $messages, bool $success = false): void
+{
+    $title = $success ? "Registration Successful" : "Registration Failed";
+    $destination = $success ? "student-login.html" : "student-signup.html";
+    $linkText = $success ? "Continue to login" : "Go back";
 
+    echo "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\">";
+    echo "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">";
+    echo "<title>" . htmlspecialchars($title, ENT_QUOTES, "UTF-8") . "</title>";
+    echo "</head><body><main><h1>"
+        . htmlspecialchars($title, ENT_QUOTES, "UTF-8")
+        . "</h1><ul>";
 
-    // Validate Name
-    if ($name == "") {
-        $errors[] = "Full Name is required.";
+    foreach ($messages as $message) {
+        echo "<li>" . htmlspecialchars($message, ENT_QUOTES, "UTF-8") . "</li>";
     }
 
+    echo "</ul><a href=\""
+        . htmlspecialchars($destination, ENT_QUOTES, "UTF-8")
+        . "\">"
+        . htmlspecialchars($linkText, ENT_QUOTES, "UTF-8")
+        . "</a></main></body></html>";
+}
 
-    // Validate Email
-    if ($email == "") {
-        $errors[] = "Email Address is required.";
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = "Enter a valid email address.";
-    }
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+    renderRegistrationMessage(["Submit the registration form to create an account."]);
+    exit;
+}
 
+$name = getRegistrationField("name");
+$username = strtolower(getRegistrationField("username"));
+$email = strtolower(getRegistrationField("email"));
+$mobile = getRegistrationField("mobile");
+$password = is_string($_POST["password"] ?? null) ? $_POST["password"] : "";
+$confirmPassword = is_string($_POST["confirmPassword"] ?? null) ? $_POST["confirmPassword"] : "";
+$course = getRegistrationField("course");
+$year = getRegistrationField("year");
+$gender = getRegistrationField("gender");
+$terms = ($_POST["terms"] ?? "") === "accepted";
 
-    // Validate Mobile
-    if ($mobile == "") {
-        $errors[] = "Phone Number is required.";
-    } elseif (!preg_match("/^[0-9]{10}$/", $mobile)) {
-        $errors[] = "Phone Number must contain exactly 10 digits.";
-    }
+$errors = [];
 
+if (!preg_match("/^[A-Za-z ]{3,50}$/", $name)) {
+    $errors[] = "Name must contain 3-50 letters and spaces.";
+}
 
-    // Validate Password
-    if ($password == "") {
-        $errors[] = "Password is required.";
-    } elseif (strlen($password) < 6) {
-        $errors[] = "Password must contain at least 6 characters.";
-    }
+if (!preg_match("/^[a-zA-Z0-9_]{3,30}$/", $username)) {
+    $errors[] = "Username must contain 3-30 letters, numbers, or underscores.";
+}
 
+if (!filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) > 254) {
+    $errors[] = "Enter a valid email address of no more than 254 characters.";
+}
 
-    // Validate Confirm Password
-    if ($confirmPassword == "") {
-        $errors[] = "Confirm Password is required.";
-    } elseif ($password != $confirmPassword) {
-        $errors[] = "Passwords do not match.";
-    }
+if (!preg_match("/^[6-9][0-9]{9}$/", $mobile)) {
+    $errors[] = "Phone number must be 10 digits and start with 6-9.";
+}
 
+if (
+    strlen($password) > 72
+    || !preg_match("/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[@#$%!]).{8,}$/", $password)
+) {
+    $errors[] = "Password must be 8-72 characters and include uppercase, lowercase, number, and special character (@#$%!).";
+}
 
-    // Validate Course
-    if ($course == "") {
-        $errors[] = "Please select a course.";
-    }
+if ($confirmPassword === "" || $password !== $confirmPassword) {
+    $errors[] = "Passwords are required and must match.";
+}
 
+if (!in_array($course, ["BCA", "BBA", "B.Tech", "MCA"], true)) {
+    $errors[] = "Please select a valid course.";
+}
 
-    // Validate Year
-    if ($year == "") {
-        $errors[] = "Please select a year.";
-    }
+if (!in_array($year, ["1", "2", "3", "4"], true)) {
+    $errors[] = "Please select a valid year.";
+}
 
+if (!in_array($gender, ["Male", "Female", "Other"], true)) {
+    $errors[] = "Please select a valid gender.";
+}
 
-    // Validate Gender
-    if ($gender == "") {
-        $errors[] = "Please select gender.";
-    }
+if (!$terms) {
+    $errors[] = "Please accept the Terms and Conditions.";
+}
 
+if ($errors) {
+    renderRegistrationMessage($errors);
+    exit;
+}
 
-    // Validate Terms
-    if (!$terms) {
-        $errors[] = "Please accept Terms and Conditions.";
-    }
+$year = (int) $year;
 
+try {
+    $check = $conn->prepare(
+        "SELECT email, username FROM students
+         WHERE LOWER(email) = ? OR LOWER(username) = ?
+         LIMIT 1"
+    );
+    $check->bind_param("ss", $email, $username);
+    $check->execute();
+    $check->bind_result($existingEmail, $existingUsername);
 
-    // Show errors
-    if (!empty($errors)) {
-
-        echo "<h2 style='color:red;'>Registration Failed</h2>";
-
-        foreach ($errors as $error) {
-            echo "<p style='color:red;'>$error</p>";
+    if ($check->fetch()) {
+        $duplicates = [];
+        if (strtolower($existingEmail) === $email) {
+            $duplicates[] = "This email is already registered.";
         }
-
-        echo "<br>";
-
-        echo "<a href='student-signup.html'>Go Back</a>";
-
+        if (strtolower($existingUsername ?? "") === $username) {
+            $duplicates[] = "This username is already taken.";
+        }
+        $check->close();
+        $conn->close();
+        renderRegistrationMessage($duplicates);
         exit;
     }
 
+    $check->close();
 
-    // Sanitize data
-    $name = htmlspecialchars($name);
-    $email = htmlspecialchars($email);
-    $mobile = htmlspecialchars($mobile);
-    $course = htmlspecialchars($course);
-    $year = htmlspecialchars($year);
-    $gender = htmlspecialchars($gender);
-
-
-    // CSV file
-    $csvFile = __DIR__ . "/students-signups.csv";
-
-
-    // Open CSV
-    $file = fopen($csvFile, "a");
-
-    if ($file === false) {
-
-        die("<h2 style='color:red;'>Unable to open CSV file.</h2>");
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+    if ($hashedPassword === false) {
+        throw new RuntimeException("Password hashing failed.");
     }
 
-
-    // Store data
-    $result = fputcsv($file, [
+    $stmt = $conn->prepare(
+        "INSERT INTO students
+         (name, username, email, mobile, course, year, gender, password)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+    );
+    $stmt->bind_param(
+        "sssssiss",
         $name,
+        $username,
         $email,
         $mobile,
         $course,
         $year,
-        $gender
-    ]);
+        $gender,
+        $hashedPassword
+    );
+    $stmt->execute();
+    $stmt->close();
+    $conn->close();
 
+    renderRegistrationMessage(["Your account has been created. You can now log in."], true);
+} catch (mysqli_sql_exception $exception) {
+    error_log("Student registration database error: " . $exception->getMessage());
+    $conn->close();
 
-    // Close CSV
-    fclose($file);
-
-
-    // Check if data was stored
-    if ($result === false) {
-
-        die("<h2 style='color:red;'>Data could not be stored.</h2>");
+    if ((int) $exception->getCode() === 1062) {
+        renderRegistrationMessage(["That email or username is already registered."]);
+    } else {
+        renderRegistrationMessage(["Unable to register right now. Please try again later."]);
     }
-
-
-    // Success message
-    echo "<script>";
-echo "alert('Registration Successful! Your data has been saved.');";
-echo "window.location.href = 'student-dashboard.html';";
-echo "</script>";
+} catch (RuntimeException $exception) {
+    error_log("Student registration error: " . $exception->getMessage());
+    $conn->close();
+    renderRegistrationMessage(["Unable to register right now. Please try again later."]);
 }
 
 ?>
