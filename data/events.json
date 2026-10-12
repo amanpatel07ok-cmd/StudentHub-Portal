@@ -1,0 +1,20 @@
+﻿[
+    {
+        "event_id": 1,
+        "event_name": "Student Orientation & Induction",
+        "event_date": "2026-08-10",
+        "description": "Welcome program for newly admitted students introducing department faculty, laboratories, and curriculum."
+    },
+    {
+        "event_id": 2,
+        "event_name": "Annual Tech Fest 2026",
+        "event_date": "2026-10-15",
+        "description": "Flagship state-level technical competitions including Hackathons, Coding Marathons, and Robotics arena."
+    },
+    {
+        "event_id": 3,
+        "event_name": "Annual Sports Day",
+        "event_date": "2026-10-25",
+        "description": "University-wide sports championships including Cricket, Football, Badminton, Athletics, and Chess."
+    }
+]

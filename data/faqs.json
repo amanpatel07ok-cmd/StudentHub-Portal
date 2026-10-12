@@ -1,0 +1,17 @@
+﻿[
+    {
+        "id": 1,
+        "question": "How do I register on StudentHub?",
+        "answer": "Click on Sign Up from the role chooser screen and fill in your enrollment number, name, email, and password."
+    },
+    {
+        "id": 2,
+        "question": "How do I log in?",
+        "answer": "Enter your registered enrollment number or email address with your password."
+    },
+    {
+        "id": 3,
+        "question": "How do I view my semester results?",
+        "answer": "Sign in as a student and click Results on your dashboard to see subject-wise marks and SPI."
+    }
+]
