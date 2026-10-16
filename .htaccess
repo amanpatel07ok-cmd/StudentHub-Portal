@@ -1,0 +1,3 @@
+﻿RewriteEngine On
+DirectoryIndex index.html HTML/index.html choose.html student-dashboard.php
+Options -Indexes
